@@ -1,0 +1,174 @@
+# AUTO-REELS PRO v5.0 — Configuration
+# ======================================
+# ⚠️  NEVER commit real tokens to git.
+# All secrets can be set via environment variables (see .env.example)
+#
+# Quick start:
+#   python main.py --setup    ← interactive wizard
+#   python main.py --check    ← validate tokens
+#   python main.py --daemon   ← start the engine
+
+# ── YouTube Channels to Monitor ──────────────────────────────────────────────
+channels:
+  - url: https://www.youtube.com/@Plotpulse01
+    max_videos_per_run: 1
+    min_duration: 120           # skip videos shorter than 2 min
+    max_duration: 7200          # skip videos longer than 2 hours
+    keywords_filter: []         # e.g. ["recap", "explained"] — empty = allow all
+    exclude_keywords: []        # e.g. ["trailer", "teaser"]
+    min_views: 0                # minimum view count (0 = no filter)
+
+  - url: https://www.youtube.com/@StoryLineMovie
+    max_videos_per_run: 1
+    min_duration: 120
+    max_duration: 7200
+    keywords_filter: []
+    exclude_keywords: []
+    min_views: 0
+
+  - url: https://www.youtube.com/@MoviesClarity2
+    max_videos_per_run: 1
+    min_duration: 120
+    max_duration: 7200
+    keywords_filter: []
+    exclude_keywords: []
+    min_views: 0
+
+  - url: https://www.youtube.com/@storyflixmovierecap
+    max_videos_per_run: 1
+    min_duration: 120
+    max_duration: 7200
+    keywords_filter: []
+    exclude_keywords: []
+    min_views: 0
+
+  - url: https://www.youtube.com/@movieunlimited-1
+    max_videos_per_run: 1
+    min_duration: 120
+    max_duration: 7200
+    keywords_filter: []
+    exclude_keywords: []
+    min_views: 0
+
+youtube:
+  cookies_file: ""              # path to cookies.txt for age-restricted content
+  proxy: ""                     # e.g. "socks5://127.0.0.1:1080" or "http://proxy:8080"
+  concurrent_channels: 3        # scan N channels in parallel (faster discovery)
+
+# ── Facebook Page ─────────────────────────────────────────────────────────────
+# Set via env vars: FACEBOOK_PAGE_ID and FACEBOOK_TOKEN
+facebook:
+  page_id: "${FACEBOOK_PAGE_ID}"
+  page_access_token: "${FACEBOOK_TOKEN}"
+  published: true
+  upload_as_reel: true
+  default_caption: "Watch this amazing clip!"
+
+# ── TikTok (optional) ─────────────────────────────────────────────────────────
+# Get token from TikTok Developer Portal → your app → OAuth
+tiktok:
+  access_token: "${TIKTOK_TOKEN}"
+  open_id: ""
+  privacy_level: "PUBLIC_TO_EVERYONE"   # SELF_ONLY / FRIEND_ONLY
+  allow_comments: true
+  allow_duet: true
+  allow_stitch: true
+  disabled: false
+
+# ── Instagram (optional) ──────────────────────────────────────────────────────
+# Requires Instagram Business/Creator account linked to a Facebook Page.
+# NOTE: Instagram requires a public video URL (not local file).
+# Set disabled: false only when you have public video hosting.
+instagram:
+  ig_user_id: "${INSTAGRAM_USER_ID}"
+  access_token: "${INSTAGRAM_TOKEN}"
+  share_to_feed: true
+  disabled: true
+
+# ── YouTube Shorts (optional, NEW in v5.0) ───────────────────────────────────
+# Requires OAuth2 credentials from Google Cloud Console.
+# Create a project, enable YouTube Data API v3, download credentials.json.
+# Run: python scripts/yt_auth.py  to complete OAuth2 flow.
+youtube_shorts:
+  credentials_file: "config/yt_credentials.json"
+  channel_id: ""                # optional, for verification
+  category_id: 24               # 24 = Entertainment
+  privacy_status: "public"      # public / private / unlisted
+  made_for_kids: false
+  disabled: true                # set false after completing OAuth2 setup
+
+# ── Clip Generation ───────────────────────────────────────────────────────────
+clips_per_video: 10             # max clips per video
+clip_length_seconds: 55         # each clip duration (seconds)
+daily_upload_limit: 5           # max Facebook uploads per day
+concurrent_uploads: 2           # platforms to upload simultaneously
+max_retries: 3                  # per-platform retry attempts
+
+output:
+  width: 1080
+  height: 1920
+  crf: 22                       # quality: 18=best, 28=smallest, 22=balanced
+  preset: fast                  # ultrafast/superfast/veryfast/fast/medium
+  hook_text: "PART {index:02d}"
+  progress_bar: true            # animated red progress bar
+  subtitles: true               # AI subtitles via OpenAI Whisper
+  whisper_model: tiny           # tiny / base / small / medium / large
+  hardware_accel: true          # auto-detect NVENC/VAAPI/VideoToolbox
+  generate_thumbnail: true      # extract thumbnail frame per clip
+
+branding:
+  channel_name: TimeFast
+  watermark: ""                 # optional watermark text
+  # 🎨 Theme options: classic | neon | minimal | dark | gold
+  theme: classic
+
+# ── Quality Scoring (NEW in v5.0) ─────────────────────────────────────────────
+# Clips are scored by audio energy + motion level.
+# Higher-scoring clips are prioritized for upload.
+quality_score_clips: true
+
+# ── AI Captions (optional, NEW in v5.0) ──────────────────────────────────────
+# Uses Anthropic Claude to generate custom captions per clip.
+# Requires ANTHROPIC_API_KEY in your .env
+ai_captions: false
+
+# ── Scene Detection ────────────────────────────────────────────────────────────
+scene_detection: true
+scene_threshold: 0.4            # 0.1 (many cuts) → 0.6 (few cuts)
+skip_start_pct: 0.08            # skip first 8% (intros)
+skip_end_pct: 0.05              # skip last 5% (outros)
+
+# ── Scheduling ────────────────────────────────────────────────────────────────
+# Upload windows: pipeline uploads within ±5 minutes of these times (UTC)
+upload_times:
+  - "09:00"
+  - "12:00"
+  - "15:00"
+  - "18:00"
+  - "21:00"
+
+schedule:
+  check_interval_minutes: 15    # how often the daemon checks for new videos
+
+# ── Notifications ─────────────────────────────────────────────────────────────
+notifications:
+  enabled: false                # set true to enable alerts
+  telegram:
+    token: "${TELEGRAM_TOKEN}"
+    chat_id: "${TELEGRAM_CHAT_ID}"
+  discord:
+    webhook_url: "${DISCORD_WEBHOOK}"
+
+# ── Auto Git-Push ─────────────────────────────────────────────────────────────
+git:
+  auto_push: false
+  remote: origin
+  branch: main
+  push_paths:
+    - "cloud/logs/"
+    - "cloud/queue/"
+
+# ── System ────────────────────────────────────────────────────────────────────
+cleanup_after_hours: 72         # delete downloaded videos/clips after N hours
+dashboard_port: 8888            # web dashboard port
+parallel_workers: 2             # concurrent FFmpeg render threads

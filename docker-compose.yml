@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  autoreels:
+    build: .
+    image: autoreels-pro-v5
+    container_name: autoreels
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./cloud/config:/app/cloud/config:ro
+      - ./cloud/queue:/app/cloud/queue
+      - ./cloud/logs:/app/cloud/logs
+      - ./cloud/downloads:/app/cloud/downloads
+      - ./cloud/output:/app/cloud/output
+    environment:
+      - PYTHONUNBUFFERED=1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/api/health"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Optional: Watchtower for auto-updates
+  # watchtower:
+  #   image: containrrr/watchtower
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   command: autoreels --interval 86400

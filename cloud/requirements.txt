@@ -1,0 +1,61 @@
+# AUTO-REELS PRO v5.0 — Python Dependencies
+# ==========================================
+# Python 3.10+  |  Install: pip install -r requirements.txt
+#
+# Quick install (recommended):
+#   pip install -r requirements.txt
+#
+# GPU-accelerated Whisper (NVIDIA):
+#   pip install torch --index-url https://download.pytorch.org/whl/cu121
+#   pip install openai-whisper
+#
+# CPU-only Whisper (slower but works everywhere):
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+#   pip install openai-whisper
+
+# ── Core pipeline ──────────────────────────────────────────────────────────────
+yt-dlp>=2024.1.0              # YouTube download (keep updated: pip install -U yt-dlp)
+pyyaml>=6.0.1                 # YAML config parsing
+requests>=2.31.0              # HTTP client
+
+# ── Scheduling ─────────────────────────────────────────────────────────────────
+APScheduler>=3.10.4           # Cron + interval job scheduling
+
+# ── Rich terminal UI ───────────────────────────────────────────────────────────
+rich>=13.7.0                  # Live dashboard, tables, progress bars, prompts
+
+# ── Web Dashboard ──────────────────────────────────────────────────────────────
+flask>=3.0.0                  # Web server for dashboard
+
+# Real-time WebSocket dashboard (highly recommended):
+flask-socketio>=5.3.6         # WebSocket support
+python-socketio>=5.11.0       # Socket.IO server
+python-engineio>=4.9.0        # Engine.IO server
+gevent>=23.9.1                # Async event loop for SocketIO (Linux/Mac)
+# Windows alternative: pip install eventlet
+
+# ── System Monitoring ──────────────────────────────────────────────────────────
+psutil>=5.9.0                 # CPU / RAM / disk metrics
+
+# ── Image Processing ───────────────────────────────────────────────────────────
+pillow>=10.0.0                # Thumbnail manipulation (optional)
+
+# ── AI Subtitles (optional but strongly recommended) ──────────────────────────
+# Install torch FIRST for your hardware (see header above), then:
+openai-whisper>=20231117
+
+# ── YouTube Shorts OAuth2 (optional) ──────────────────────────────────────────
+# Required only if using YouTube Shorts upload:
+# google-auth>=2.28.0
+# google-auth-oauthlib>=1.2.0
+# google-api-python-client>=2.122.0
+
+# ── AI Captions (optional) ────────────────────────────────────────────────────
+# Required only if ai_captions: true in config:
+# anthropic>=0.20.0
+
+# ── Dev / Testing ──────────────────────────────────────────────────────────────
+# pytest>=7.4.0
+# pytest-cov>=4.1.0
+# ruff>=0.3.0
+# mypy>=1.9.0

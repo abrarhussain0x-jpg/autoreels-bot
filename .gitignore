@@ -1,0 +1,41 @@
+# AUTO-REELS PRO v5.0 — .gitignore
+
+# ── Secrets (NEVER commit these) ─────────────────────────────────────────────
+.env
+*.env
+cloud/config/yt_credentials.json
+cloud/config/client_secret.json
+cloud/config/cookies.txt
+
+# ── Generated data ────────────────────────────────────────────────────────────
+cloud/downloads/
+cloud/output/
+cloud/queue/seen.json
+cloud/queue/uploads_*.txt
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+cloud/logs/
+*.log
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+.eggs/
+*.egg-info/
+dist/
+build/
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDEs ──────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
