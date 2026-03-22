@@ -27,17 +27,16 @@ jobs:
           mkdir -p cloud/queue
           touch cloud/queue/seen.json
 
-      - name: Fix APT mirrors (CRITICAL)
+      - name: Fix APT mirrors (FULL)
         run: |
           sudo rm -f /etc/apt/apt-mirrors.txt
-
+          sudo rm -f /etc/apt/sources.list.d/*.list || true
           sudo bash -c 'cat > /etc/apt/sources.list <<EOF
 deb http://archive.ubuntu.com/ubuntu jammy main restricted universe multiverse
 deb http://archive.ubuntu.com/ubuntu jammy-updates main restricted universe multiverse
 deb http://archive.ubuntu.com/ubuntu jammy-backports main restricted universe multiverse
 deb http://security.ubuntu.com/ubuntu jammy-security main restricted universe multiverse
 EOF'
-
           sudo apt-get clean
           sudo rm -rf /var/lib/apt/lists/*
           sudo apt-get update
