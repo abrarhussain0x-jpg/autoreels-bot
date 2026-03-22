@@ -24,6 +24,9 @@ jobs:
           mkdir -p cloud/queue
           touch cloud/queue/seen.json
 
+      - name: Remove invalid apt sources
+        run: sudo sed -i '/apt-mirrors.txt/d' /etc/apt/sources.list /etc/apt/sources.list.d/* || true
+
       - name: Install FFmpeg and yt-dlp
         run: |
           sudo rm -f /etc/apt/apt-mirrors.txt
@@ -53,7 +56,7 @@ jobs:
 
       - name: Save seen videos cache
         if: always()
-        uses: actions/cache/save@v4
+        uses: actions/cache@v4
         with:
           path: cloud/queue/seen.json
           key: seen-videos-${{ github.run_id }}
