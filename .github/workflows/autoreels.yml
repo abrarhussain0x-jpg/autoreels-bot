@@ -7,6 +7,7 @@ on:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   run-bot:
     runs-on: ubuntu-22.04
@@ -26,14 +27,29 @@ jobs:
           mkdir -p cloud/queue
           touch cloud/queue/seen.json
 
+      - name: Fix APT sources (workaround for runner mirror issues)
+        run: |
+          # Remove any stray apt-mirrors file and write a known-good sources.list
+          sudo rm -f /etc/apt/apt-mirrors.txt || true
+          sudo bash -c 'cat > /etc/apt/sources.list <<EOF
+deb http://archive.ubuntu.com/ubuntu jammy main universe restricted multiverse
+deb http://archive.ubuntu.com/ubuntu jammy-updates main universe restricted multiverse
+deb http://archive.ubuntu.com/ubuntu jammy-backports main universe restricted multiverse
+deb http://security.ubuntu.com/ubuntu jammy-security main universe restricted multiverse
+EOF'
+          sudo rm -rf /var/lib/apt/lists/*
+          sudo apt-get clean
+          sudo apt-get update
+
       - name: Install FFmpeg and yt-dlp
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg
-          pip install yt-dlp
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          python -m pip install --upgrade pip
+          python -m pip install yt-dlp
 
       - name: Install bot dependencies
-        run: pip install -r cloud/requirements.txt
+        run: python -m pip install -r cloud/requirements.txt
 
       - name: Restore seen videos cache
         uses: actions/cache@v4
