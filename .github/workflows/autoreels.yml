@@ -29,8 +29,9 @@ jobs:
 
       - name: Fix APT sources (workaround for runner mirror issues)
         run: |
-          # Remove any stray apt-mirrors file and write a known-good sources.list
+          # Remove any stray apt-mirrors file and broken mirror references in all apt sources
           sudo rm -f /etc/apt/apt-mirrors.txt || true
+          sudo find /etc/apt/sources.list.d/ -type f -exec sudo sed -i '/mirror+file:\/etc\/apt\/apt-mirrors.txt/d' {} \;
           sudo bash -c 'cat > /etc/apt/sources.list <<EOF
 deb http://archive.ubuntu.com/ubuntu jammy main universe restricted multiverse
 deb http://archive.ubuntu.com/ubuntu jammy-updates main universe restricted multiverse
