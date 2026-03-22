@@ -5,6 +5,8 @@ on:
     - cron: '0 9,12,15,18,21 * * *'
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 jobs:
   run-bot:
     runs-on: ubuntu-22.04
@@ -24,12 +26,8 @@ jobs:
           mkdir -p cloud/queue
           touch cloud/queue/seen.json
 
-      - name: Remove invalid apt sources
-        run: sudo sed -i '/apt-mirrors.txt/d' /etc/apt/sources.list /etc/apt/sources.list.d/* || true
-
       - name: Install FFmpeg and yt-dlp
         run: |
-          sudo rm -f /etc/apt/apt-mirrors.txt
           sudo apt-get update
           sudo apt-get install -y ffmpeg
           pip install yt-dlp
