@@ -1,19 +1,23 @@
 name: Auto-Reels Bot
 
 on:
+  schedule:
+    - cron: '0 9,12,15,18,21 * * *'
   workflow_dispatch:
 
 jobs:
   run-bot:
     runs-on: ubuntu-22.04
+    timeout-minutes: 55
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
       - name: Remove broken apt mirror file
         run: |
@@ -27,10 +31,29 @@ jobs:
           sudo apt-get install -y ffmpeg || sudo apt-get install -y ffmpeg --fix-missing
           pip install yt-dlp
 
-      - name: Install requirements
-        run: |
-          pip install -r cloud/requirements.txt
+      - name: Install bot dependencies
+        run: pip install -r cloud/requirements.txt
+
+      - name: Restore seen videos cache
+        uses: actions/cache@v4
+        with:
+          path: cloud/queue/seen.json
+          key: seen-videos-${{ github.run_id }}
+          restore-keys: seen-videos-
 
       - name: Run bot
+        env:
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_TOKEN: ${{ secrets.FACEBOOK_TOKEN }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          python3 cloud/main.py
+          cd cloud
+          python main.py --once --no-web
+
+      - name: Save seen videos cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: cloud/queue/seen.json
+          key: seen-videos-${{ github.run_id }}
