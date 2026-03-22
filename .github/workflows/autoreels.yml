@@ -26,9 +26,8 @@ jobs:
 
       - name: Install FFmpeg and yt-dlp
         run: |
-          sudo rm -f /etc/apt/apt-mirrors.txt
-          sudo apt-get update --allow-releaseinfo-change
-          sudo apt-get install -y --fix-missing ffmpeg
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
           pip install yt-dlp
 
       - name: Install bot dependencies
